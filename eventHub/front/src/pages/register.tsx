@@ -27,15 +27,12 @@ export default function Register() {
     });
 
     const data = await response.json();
-    console.log(data);
     if (response.ok) {
       localStorage.setItem("token", data.token);
       auth?.setRole(formData.role);
-      navigate(formData.role === "organizer" ? "/dashboard" : "/");
+      navigate(formData.role === "organizer" ? "/organizer/dashboard" : "/");
     } else {
-      const message = "erreur lors de la création du compte";
-      setError(message);
-      console.log(message);
+      setError(data.message ?? "Erreur lors de la création du compte");
     }
   }
 

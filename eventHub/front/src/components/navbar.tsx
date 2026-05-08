@@ -16,7 +16,7 @@ export default function Navbar() {
           <div className="flex gap-5 ml-auto">
           {role && <Link to="/tickets">tickets</Link>}
           {role && <Link to="/profile">profil</Link>}
-          {role === "organizer" && <Link to="/dashboard">dashboard</Link>}
+          {(role === "organizer" || role === "admin") && <Link to="/organizer/dashboard">dashboard</Link>}
           {!role && <Link to="/login">login</Link>}
           {!role && <Link to="/register">register</Link>}
           

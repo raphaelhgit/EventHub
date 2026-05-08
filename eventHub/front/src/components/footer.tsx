@@ -1,11 +1,7 @@
 export default function Footer() {
-    return (
-        <>
-        <div className="flex fixed bottom-0">
-        <p>footer
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati, ratione facere non perferendis pariatur deleniti nihil dolor nulla sint blanditiis? Praesentium, tempore. Obcaecati quos non, iste praesentium sed doloremque sapiente!
-        </p>
-        </div>
-        </>
-    );
+  return (
+    <footer className="p-4 text-center text-sm bg-blue-900 text-amber-100 mt-8">
+      EventHub 2026
+    </footer>
+  );
 }

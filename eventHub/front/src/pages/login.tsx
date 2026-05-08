@@ -21,8 +21,7 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       const role = await getRole();
       auth?.setRole(role);
-      console.log("connecté");
-      navigate(role === "organizer" ? "/dashboard" : "/");
+      navigate(role === "organizer" || role === "admin" ? "/organizer/dashboard" : "/");
     } else {
       setError("Email ou mot de passe incorrect");
     }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 interface Event {
@@ -98,7 +98,7 @@ export default function EventDetail() {
         <p>Places disponibles : {event.availablePlaces} / {event.totalPlaces}</p>
 
         {buySuccess ? (
-          <p>✅ Billet acheté ! Retrouvez-le dans <a href="/tickets" className="underline">Mes billets</a>.</p>
+          <p>achat reussi, Retrouvez-le dans <Link to="/tickets" className="underline">Mes billets</Link>.</p>
         ) : (
           <>
             <button

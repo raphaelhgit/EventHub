@@ -4,11 +4,13 @@ import Navbar from "./navbar.tsx";
 
 function Layout() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <Outlet />
+      <main className="flex-1">
+        <Outlet />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 }
 export default Layout;
