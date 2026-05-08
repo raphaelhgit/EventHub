@@ -25,6 +25,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/auth": "http://localhost:3000",
+      "/events": "http://localhost:3000",
+      "/organizer": "http://localhost:3000",
     },
   },
 });
