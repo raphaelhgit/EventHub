@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { fetchAuth } from "../utils/fetchAuth";
 
 interface User {
   id: string;
@@ -21,10 +22,7 @@ export default function Profile() {
 
   useEffect(() => {
     async function loadProfile() {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetchAuth("/auth/me");
       if (!response.ok) {
         setError("Impossible de charger le profil");
         setLoading(false);
@@ -45,13 +43,9 @@ export default function Profile() {
     }
     setError("");
     setSuccess("");
-    const token = localStorage.getItem("token");
-    const response = await fetch("/auth/me", {
+    const response = await fetchAuth("/auth/me", {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newName.trim() }),
     });
     const data = await response.json();

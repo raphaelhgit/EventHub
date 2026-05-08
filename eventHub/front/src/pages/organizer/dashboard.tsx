@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { fetchAuth } from "../../utils/fetchAuth";
 
 interface Stats {
   totalEvents: number;
@@ -17,10 +18,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadStats() {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/events/organizer/stats", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetchAuth("/events/organizer/stats");
       if (!response.ok) {
         setError("Impossible de charger les statistiques");
         setLoading(false);

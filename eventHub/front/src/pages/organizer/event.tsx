@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { fetchAuth } from "../../utils/fetchAuth";
 
 interface Event {
   id: string;
@@ -23,10 +24,7 @@ export default function MyEvents() {
   const navigate = useNavigate();
 
   async function loadEvents() {
-    const token = localStorage.getItem("token");
-    const response = await fetch("/events/organizer/my-events", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetchAuth("/events/organizer/my-events");
     if (!response.ok) {
       setError("Impossible de charger les événements");
       setLoading(false);
@@ -43,11 +41,7 @@ export default function MyEvents() {
 
   async function handleDelete(id: string) {
     if (!confirm("Supprimer cet événement ?")) return;
-    const token = localStorage.getItem("token");
-    const response = await fetch(`/events/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetchAuth(`/events/${id}`, { method: "DELETE" });
     if (response.ok) {
       setEvents((prev) => prev.filter((e) => e.id !== id));
     } else if (response.status === 409) {

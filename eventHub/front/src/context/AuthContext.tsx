@@ -14,10 +14,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getRole().then((r) => {
-      setRole(r);
-      setLoading(false);
-    });
+    getRole()
+      .then((r) => {
+        setRole(r);
+        setLoading(false);
+      })
+      .catch(() => {
+        setRole(null);
+        setLoading(false);
+      });
   }, []);
 
   return (

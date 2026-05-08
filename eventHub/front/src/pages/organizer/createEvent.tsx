@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchAuth } from "../../utils/fetchAuth";
 
 const CATEGORIES = ["Concert", "Conférence", "Festival", "Sport", "Théâtre", "Autre"];
 
@@ -62,13 +63,9 @@ export default function CreateEvent() {
   async function handleSubmit() {
     if (!validate()) return;
     setApiError("");
-    const token = localStorage.getItem("token");
-    const response = await fetch("/events", {
+    const response = await fetchAuth("/events", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: form.title,
         description: form.description,

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { fetchAuth } from "../utils/fetchAuth";
 
 type TicketStatus = "valid" | "used" | "cancelled";
 
@@ -43,10 +44,7 @@ export default function MyTickets() {
 
   useEffect(() => {
     async function loadTickets() {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/tickets", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetchAuth("/tickets");
       if (!response.ok) {
         setError("Impossible de charger les billets");
         setLoading(false);

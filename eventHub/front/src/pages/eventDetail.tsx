@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { fetchAuth } from "../utils/fetchAuth";
 
 interface Event {
   id: string;
@@ -51,13 +52,9 @@ export default function EventDetail() {
     }
     setBuyLoading(true);
     setBuyError("");
-    const token = localStorage.getItem("token");
-    const response = await fetch("/tickets", {
+    const response = await fetchAuth("/tickets", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ eventId: id }),
     });
     setBuyLoading(false);
@@ -91,6 +88,7 @@ export default function EventDetail() {
       <h1 className="text-2xl font-bold">{event.title}</h1>
       <p className="text-sm">{event.category} · {event.city}</p>
       <p className="text-sm">{event.date} à {event.time} · {event.location}</p>
+      <p className="text-sm">Organisateur : {event.organizerId}</p>
       <p>{event.description}</p>
 
       <div className="border-black border-2 p-4 flex flex-col gap-2">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { fetchAuth } from "../../utils/fetchAuth";
 
 const CATEGORIES = ["Concert", "Conférence", "Festival", "Sport", "Théâtre", "Autre"];
 
@@ -27,10 +28,7 @@ export default function EditEvent() {
 
   useEffect(() => {
     async function loadEvent() {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`/events/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetchAuth(`/events/${id}`);
       if (!response.ok) {
         setApiError("Événement introuvable");
         setLoading(false);
@@ -84,13 +82,9 @@ export default function EditEvent() {
   async function handleSubmit() {
     if (!form || !validate()) return;
     setApiError("");
-    const token = localStorage.getItem("token");
-    const response = await fetch(`/events/${id}`, {
+    const response = await fetchAuth(`/events/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: form.title,
         description: form.description,
