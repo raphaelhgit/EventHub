@@ -1,33 +1,37 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Register() {
-  const [formData, setformData] = useState({
+  const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
-    name: "",
     confirmPassword: "",
+    role: "user",
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
 
   async function handleSubmit() {
     if (formData.password !== formData.confirmPassword) {
       setError("mot de passe différent");
       return;
-    } 
+    }
+    const { confirmPassword, ...body } = formData;
     const response = await fetch("/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(body),
     });
 
     const data = await response.json();
     console.log(data);
     if (response.ok) {
       localStorage.setItem("token", data.token);
-      console.log("compte crée");
-      navigate("/");
+      auth?.setRole(formData.role);
+      navigate(formData.role === "organizer" ? "/dashboard" : "/");
     } else {
       const message = "erreur lors de la création du compte";
       setError(message);
@@ -36,54 +40,50 @@ export default function Register() {
   }
 
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col w-80 gap-4 ">
-          <p>register</p>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={(e) => setformData({ ...formData, name: e.target.value })}
-            className="border-black border-2"
-            placeholder="Indiquez votre nom d'utilisateur"
-          />
-          <input
-            type="email"
-            name="mail"
-            value={formData.email}
-            onChange={(e) =>
-              setformData({ ...formData, email: e.target.value })
-            }
-            className="border-black border-2"
-            placeholder="Indiquez votre email"
-          />
-          <input
-            type="password"
-            name="psswrd"
-            value={formData.password}
-            onChange={(e) =>
-              setformData({ ...formData, password: e.target.value })
-            }
-            className="border-black border-2"
-            placeholder="Indiquez votre mot de passe"
-          />
-          <input
-            type="password"
-            name="psswrdconfirm"
-            value={formData.confirmPassword}
-            onChange={(e) =>
-              setformData({ ...formData, confirmPassword: e.target.value })
-            }
-            className="border-black border-2"
-            placeholder="confirmer votre mot de passe"
-          />
-          <button onClick={handleSubmit} className="border-black border-2">
-            crée un compte
-          </button>
-          {error && <p>{error}</p>}
-        </div>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col w-80 gap-4">
+        <p>register</p>
+        <input
+          type="text"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className="border-black border-2"
+          placeholder="Nom d'utilisateur"
+        />
+        <input
+          type="email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          className="border-black border-2"
+          placeholder="Email"
+        />
+        <input
+          type="password"
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          className="border-black border-2"
+          placeholder="Mot de passe"
+        />
+        <input
+          type="password"
+          value={formData.confirmPassword}
+          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+          className="border-black border-2"
+          placeholder="Confirmer le mot de passe"
+        />
+        <select
+          value={formData.role}
+          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+          className="border-black border-2"
+        >
+          <option value="user">Utilisateur</option>
+          <option value="organizer">Organisateur</option>
+        </select>
+        <button onClick={handleSubmit} className="border-black border-2">
+          Créer un compte
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
       </div>
-    </>
+    </div>
   );
 }

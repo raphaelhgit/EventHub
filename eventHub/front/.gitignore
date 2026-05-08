@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+ENONCE_FRONT.pdf
 
 # Editor directories and files
 .vscode/*

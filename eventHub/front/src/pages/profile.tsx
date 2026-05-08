@@ -9,7 +9,7 @@ export default function Profile() {
 
   return (
     <>
-    <button onClick={deco}>deconexion </button>
+    <button className="w-32 h-8 border-black border-2" onClick={deco}>deconexion </button>
     </>
   );
 }

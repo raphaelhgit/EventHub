@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import getRole from "../utils/auth";
 
 export default function Login() {
-  const [formData, setformData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
 
   async function handleSubmit() {
     const response = await fetch("/auth/login", {
@@ -16,46 +19,38 @@ export default function Login() {
     const data = await response.json();
     if (response.ok) {
       localStorage.setItem("token", data.token);
-      console.log("connecté !");
-      navigate("/");
+      const role = await getRole();
+      auth?.setRole(role);
+      console.log("connecté");
+      navigate(role === "organizer" ? "/dashboard" : "/");
     } else {
-      const message = "Email ou mot de passe incorrect";
-      setError(message);
-      console.log(message);
+      setError("Email ou mot de passe incorrect");
     }
   }
 
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col w-80 gap-4 ">
-          <p>login</p>
-          <input
-            type="email"
-            name="mail"
-            value={formData.email}
-            onChange={(e) =>
-              setformData({ ...formData, email: e.target.value })
-            }
-            className="border-black border-2"
-            placeholder="Indiquez votre email"
-          />
-          <input
-            type="password"
-            name="psswrd"
-            value={formData.password}
-            onChange={(e) =>
-              setformData({ ...formData, password: e.target.value })
-            }
-            className="border-black border-2"
-            placeholder="Indiquez votre mot de passe"
-          />
-          <button onClick={handleSubmit} className="border-black border-2">
-            se connecter
-          </button>
-          {error && <p>{error}</p>}
-        </div>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col w-80 gap-4">
+        <p>login</p>
+        <input
+          type="email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          className="border-black border-2"
+          placeholder="Email"
+        />
+        <input
+          type="password"
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          className="border-black border-2"
+          placeholder="Mot de passe"
+        />
+        <button onClick={handleSubmit} className="border-black border-2">
+          Se connecter
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
       </div>
-    </>
+    </div>
   );
 }
