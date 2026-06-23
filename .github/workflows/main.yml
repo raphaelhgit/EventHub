@@ -37,32 +37,12 @@ jobs:
   deploy:
     name: Deploy to production
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.IP_SERV }}
-          username: admin
-          password: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: |
-            set -e
-            cd /var/www/eventhub
-            git pull origin main
-            cd back
-            npm ci --include=dev
-            npm run build
-            cd ../front
-            npm ci --include=dev
-            npm run build
-            cd ../back
-            pm2 restart eventhub-api || pm2 start dist/index.js --name eventhub-api
-            pm2 save
-            sudo nginx -t
-            sudo systemctl reload nginx
+      - name: Deploy on server
+        run: bash /var/www/eventhub/scripts/deploy.sh
 
       - name: Smoke test
         run: curl -fsS https://itzthomthom.fr/api/health | grep -q '"status":"ok"'
