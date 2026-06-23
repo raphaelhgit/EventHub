@@ -45,4 +45,15 @@ jobs:
         run: bash /var/www/eventhub/scripts/deploy.sh
 
       - name: Smoke test
-        run: curl -fsS https://itzthomthom.fr/api/health | grep -q '"status":"ok"'
+        run: |
+          for i in 1 2 3 4 5; do
+            sleep 3
+            if curl -fsS https://itzthomthom.fr/api/health | grep -q '"status":"ok"'; then
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+          done
+          echo "Smoke test failed after 5 attempts"
+          curl -v https://itzthomthom.fr/api/health || true
+          curl -v http://127.0.0.1:3000/health || true
+          exit 1

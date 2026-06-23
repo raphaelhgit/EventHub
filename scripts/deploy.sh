@@ -30,6 +30,9 @@ else
 fi
 pm2 save
 
+echo "==> Attente démarrage API"
+sleep 5
+
 echo "==> Nginx"
 sudo nginx -t
 sudo systemctl reload nginx
