@@ -9,7 +9,7 @@ cd "$APP_DIR"
 echo "==> Git pull"
 git fetch origin main
 git checkout main
-git pull origin main
+git reset --hard origin/main
 
 echo "==> Backend"
 cd back
