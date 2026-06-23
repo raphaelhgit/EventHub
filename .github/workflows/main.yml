@@ -24,17 +24,14 @@ jobs:
 
       - name: Build backend
         working-directory: back
-        env:
-          JWT_SECRET: ci-build-secret-min-32-characters-long
-          NODE_ENV: production
         run: |
-          npm ci
+          npm ci --include=dev
           npm run build
 
       - name: Build frontend
         working-directory: front
         run: |
-          npm ci
+          npm ci --include=dev
           npm run build
 
   deploy:
@@ -56,10 +53,10 @@ jobs:
             cd /var/www/eventhub
             git pull origin main
             cd back
-            npm ci
+            npm ci --include=dev
             npm run build
             cd ../front
-            npm ci
+            npm ci --include=dev
             npm run build
             cd ../back
             pm2 restart eventhub-api || pm2 start dist/index.js --name eventhub-api
