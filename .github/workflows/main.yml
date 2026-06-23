@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
@@ -29,3 +30,76 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
+=======
+name: EventHub CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build back & front
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: |
+            back/package-lock.json
+            front/package-lock.json
+
+      - name: Build backend
+        working-directory: back
+        env:
+          JWT_SECRET: ci-build-secret-min-32-characters-long
+          NODE_ENV: production
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build frontend
+        working-directory: front
+        run: |
+          npm ci
+          npm run build
+
+  deploy:
+    name: Deploy to production
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.IP_SERV }}
+          username: admin
+          password: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            cd /var/www/eventhub
+            git pull origin main
+            cd back
+            npm ci
+            npm run build
+            cd ../front
+            npm ci
+            npm run build
+            cd ../back
+            pm2 restart eventhub-api || pm2 start dist/index.js --name eventhub-api
+            pm2 save
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+      - name: Smoke test
+        run: curl -fsS https://itzthomthom.fr/api/health | grep -q '"status":"ok"'
+>>>>>>> c8ba83b (V13 (ajout CI/CD))
