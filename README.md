@@ -75,6 +75,9 @@ npm run dev
 ```
 
 Accès : [http://localhost:5173](http://localhost:5173)
+uT#a9qQy@nAfNJsH
+
+ssh root@31.97.177.104
 
 ---
 
