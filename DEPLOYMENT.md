@@ -315,12 +315,12 @@ bash scripts/deploy.sh
 
 [Liste et solutions]
 
-- nginx servait la page par defaut : la config etait dans sites-enabled mais nginx.org lit conf.d/ → fix : mettre eventhub.conf dans /etc/nginx/conf.d/
-- deploy github ssh timeout : le reseau du serv bloque les ip github → fix : runner self-hosted
-- git pull bloqué par back/dist/ commité par erreur → fix : dist/ dans gitignore + git reset --hard dans deploy.sh
-- sudo demandait mdp pendant le deploy → fix : ligne NOPASSWD en bas du visudo pour nginx et systemctl
-- /api/test-db 404 : route pas encore deploy → fix : ajout route test-db + push
-- smoke test 502 apres pm2 restart : back pas encore pret → fix : sleep + retry dans le workflow
+- nginx servait la page par defaut : la config etait dans sites-enabled mais nginx.org lit conf.d/ -> fix : mettre eventhub.conf dans /etc/nginx/conf.d/
+- deploy github ssh timeout : le reseau du serv bloque les ip github -> fix : runner self-hosted
+- git pull bloqué par back/dist/ commité par erreur -> fix : dist/ dans gitignore + git reset --hard dans deploy.sh
+- sudo demandait mdp pendant le deploy -> fix : ligne NOPASSWD en bas du visudo pour nginx et systemctl
+- /api/test-db 404 : route pas encore deploy -> fix : ajout route test-db + push
+- smoke test 502 apres pm2 restart : back pas encore pret -> fix : sleep + retry dans le workflow
 
 ## 7. Ressources consultées
 
@@ -332,3 +332,4 @@ https://jestjs.io/fr/docs/getting-started#utilisation-de-vite
 https://docs.github.com/en/actions/hosting-your-own-runners
 https://pm2.keymetrics.io/docs/usage/quick-start/
 https://certbot.eff.org/
+composteur 2.5 (cursor) pour des question et résolution de bug

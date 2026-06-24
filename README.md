@@ -1,5 +1,7 @@
 # EventHub — Frontend
 
+PAS A JOUR, les infos sont dans DEPLOYMENT.md
+
 Application React pour la gestion et l'achat de billets d'événements.
 
 ---
@@ -74,8 +76,7 @@ cd eventHub/front
 npm run dev
 ```
 
-Accès : [http://localhost:5173](http://localhost:5173)
-uT#a9qQy@nAfNJsH
+Accès : https://itzthomthom.fr/
 
 ssh root@31.97.177.104
 
