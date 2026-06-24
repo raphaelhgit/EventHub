@@ -34,3 +34,9 @@ installer avec pip
 
 le CI/CD est fait avec github actions, il y a un runner sur le serv pour que ça marche 
 a chaque push le server se met a jour, avec tous les test avant et apres
+
+
+vitest pour ce projet est plus adapté que jest car il n'est pas bien suporté avec vite
+https://jestjs.io/fr/docs/getting-started#utilisation-de-vite
+
+j'utilise donc Vitest a la place

@@ -19,6 +19,7 @@ import authRoutes from './routes/auth.routes.js';
 import eventRoutes from './routes/events.routes.js';
 import ticketRoutes from './routes/tickets.routes.js';
 import { seedDemoData } from './services/seed.js';
+import sqliteDb from './services/database.js';
 
 // =============================================================================
 // INITIALISATION EXPRESS
@@ -72,6 +73,17 @@ app.get('/', (req, res) => {
 // Health check — utile pour les outils de monitoring / load balancers
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Test connexion BDD
+app.get('/test-db', (req, res) => {
+  try {
+    const row = sqliteDb.prepare('SELECT 1 AS ok').get() as { ok: number };
+    res.json({ status: 'ok', database: 'connected', result: row });
+  } catch (error) {
+    console.error('Database test failed:', error);
+    res.status(500).json({ status: 'error', database: 'disconnected' });
+  }
 });
 
 // Montage des routes
