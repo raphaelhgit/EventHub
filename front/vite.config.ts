@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
@@ -28,5 +29,8 @@ export default defineConfig({
       "/events": "http://localhost:3000",
       "/tickets": "http://localhost:3000",
     },
+  },
+  test: {
+    environment: "jsdom",
   },
 });

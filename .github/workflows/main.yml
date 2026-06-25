@@ -22,16 +22,18 @@ jobs:
             back/package-lock.json
             front/package-lock.json
 
-      - name: Build backend
+      - name: Test & build backend
         working-directory: back
         run: |
           npm ci --include=dev
+          npm test
           npm run build
 
-      - name: Build frontend
+      - name: Test & build frontend
         working-directory: front
         run: |
           npm ci --include=dev
+          npm test
           npm run build
 
   deploy:
