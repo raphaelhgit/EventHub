@@ -145,6 +145,8 @@ To                         Action      From
 443/tcp (v6)               ALLOW       Anywhere (v6)     
 ```
 
+fail2ban est config est actif sur le serv
+
 ## 4. CI/CD
 
 le CI/CD est fait avec github actions, il y a un runner sur le serv pour que ça marche 
