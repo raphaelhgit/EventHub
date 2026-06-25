@@ -13,13 +13,14 @@ EVENTHUB/
 ├── .github/
 │   └── workflows/
 │       └── main.yml # Pipeline CI/CD
+│── nginx
+│   ├── app.conf
 ├── scripts/
 │   ├── deploy.sh      # Script de déploiement (optionnel)
+│   └── backup.sh      # Sauvegarde SQLite
 └── README.md          # Description du projet
 ```
 ## 2. Prérequis
-
-[Liste des prérequis]
 
 serveur linux avec ssh (31.97.177.104), node 20, npm, pm2 en global (`npm install -g pm2`), compte admin avec sudo
 
@@ -100,7 +101,10 @@ pm2 status pour voir si ça le back tourne
 
 ### 3.5 Configuration de Nginx
 
-config dans /etc/nginx/conf.d/eventhub.conf (pas sites-enabled sur notre install nginx.org)
+config versionnée dans le repo : `nginx/app.conf`
+copiée sur le serv dans `/etc/nginx/conf.d/eventhub.conf` puis `sudo nginx -t && sudo systemctl reload nginx`
+
+headers de securité, gzip et cache des assets `/assets/` configures dans app.conf
 
 nginx : https://nginx.org/en/docs/beginners_guide.html
 
@@ -147,6 +151,20 @@ To                         Action      From
 
 fail2ban est config est actif sur le serv
 
+chemin : etc/fail2ban/jail.local
+
+sudo fail2ban-client status sshd
+```bash
+Status for the jail: sshd
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- Journal matches:  _SYSTEMD_UNIT=ssh.service + _COMM=sshd
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+```
 ## 4. CI/CD
 
 le CI/CD est fait avec github actions, il y a un runner sur le serv pour que ça marche 
@@ -166,6 +184,9 @@ fichier workflow : .github/workflows/main.yml
 script deploy sur le serv : scripts/deploy.sh
 
 le deploy ssh direct depuis github marchait pas (timeout), du coup runner self-hosted dans /var/www/eventhub/actions-runner
+
+
+
 
 ## 5. Maintenance
 
@@ -263,7 +284,7 @@ PM2        | 2026-06-24T09:07:45: PM2 log: App [eventhub-api:0] online
 0|eventhub |   Event already exists: Marathon de Toulouse
 0|eventhub | Demo data seeded successfully.
 0|eventhub | EventHub API running on http://localhost:3000
-0|eventhub | Environment: development
+0|eventhub | Environment: production
 0|eventhub | Frontend URL: https://itzthomthom.fr
 ```
 
@@ -294,13 +315,32 @@ sudo tail -n 20 /var/log/nginx/access.log
 
 ### 5.4 Backup et restauration
 
-la bdd c'est juste un fichier sqlite, pour backup :
+la bdd c'est un fichier sqlite dans `back/data/eventhub.db`
+
+script dans le repo :
 
 ```bash
-cp /var/www/eventhub/back/data/eventhub.db ~/backup-eventhub-$(date +%F).db
+bash /var/www/eventhub/scripts/backup.sh
 ```
 
-pas de cron mis en place pour l'instant mais faisable facilement
+les backups vont dans `/var/backups/eventhub/` (14 jours gardés par défaut)
+
+backup auto avec cron (tous les jours a 3h) :
+
+```bash
+sudo mkdir -p /var/backups/eventhub
+crontab -e
+# ajouter :
+0 3 * * * /var/www/eventhub/scripts/backup.sh >> /var/log/eventhub-backup.log 2>&1
+```
+
+restauration :
+
+```bash
+pm2 stop eventhub-api
+cp /var/backups/eventhub/eventhub-YYYY-MM-DD_HH-MM-SS.db /var/www/eventhub/back/data/eventhub.db
+pm2 start eventhub-api
+```
 
 ### 5.5 Rollback
 
